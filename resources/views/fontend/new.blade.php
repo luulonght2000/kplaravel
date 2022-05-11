@@ -15,13 +15,13 @@
             @csrf
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="name">Slug</label>
-                <input type="text" class="col-sm-10 form-control" id="slug" placeholder="slug" name="slug" value="{{old('name')}}">
+                <input type="text" class="col-sm-10 form-control" id="slug" placeholder="slug" name="slug" value="{{old('slug')}}">
                 <span class="error-message">{{ $errors->first('slug') }}</span>
             </div>
 
             <div class="form-group row">
                 <label class="col-sm-2 col-form-label" for="name">Title</label>
-                <input type="text" class="col-sm-10 form-control" id="title" placeholder="Tên " name="title" value="{{old('name')}}">
+                <input type="text" class="col-sm-10 form-control" id="title" placeholder="Tên " name="title" value="{{old('title')}}">
                 <span class="error-message">{{ $errors->first('title') }}</span>
             </div>
 

@@ -19,12 +19,26 @@ class PostController extends Controller
     public function index()
     {
         $title = 'Báo mới';
+        $title_page = 'List Post';
 
-        $posts = PostModel::withCount(['comment'])->with('user')->get();
+        $posts = PostModel::withCount(['comment'])->with('user')->paginate(10);
 
-        return view('fontend/posts.index', ['title' => $title, 'posts' => $posts]);
+        return view('fontend/posts.index', ['title' => $title, 'title_page' => $title_page, 'posts' => $posts]);
+    }
 
+    public function postDetail($id)
+    {
+        $title = 'Báo mới';
+        $post = PostModel::findOrFail($id);
+        $comments = $post->comment()->get();
 
+        return view('fontend/posts.postdetail', ['title' => $title, 'post' => $post, 'comments' => $comments]);
+
+        // $post = PostModel::with(['comment' => function ($query) {
+        //     $query->where('description');
+        // }])->get();
+
+        // return view('fontend/posts.postdetail', ['title' => $title, 'posts' => $posts]);
     }
 
     /**

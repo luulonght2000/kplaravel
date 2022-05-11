@@ -15,12 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('layouts.app');
-});
-
-Route::get('/welcome', function () {
-    return view('fontend.test')->name('welcome');
-    //->with(['name' => 'Taylor']);
+    return view('fontend/home');
 });
 
 Route::get('user/{id}/name/{name?}', function ($id, $name = "null") {
@@ -28,13 +23,6 @@ Route::get('user/{id}/name/{name?}', function ($id, $name = "null") {
 });
 // ->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
 
-
-
-Route::prefix('admin')->group(function () {
-    Route::get('/users', function () {
-        return "lưu long";
-    });
-});
 
 Route::get('/responses', function ($minutes = 4) {
     return response('Hello World')->cookie('name', 'value', $minutes);
@@ -44,8 +32,9 @@ Route::prefix('/')->group(function () {
     Route::resource('home', \App\Http\Controllers\HomeController::class);
 });
 
-Route::prefix('/')->group(function () {
-    Route::resource('post', \App\Http\Controllers\PostController::class);
+Route::prefix('/post')->group(function () {
+    Route::resource('/', \App\Http\Controllers\PostController::class);
+    Route::get('/postDetail/{id}', '\App\Http\Controllers\PostController@postDetail');
 });
 
 Route::prefix('/')->group(function () {
