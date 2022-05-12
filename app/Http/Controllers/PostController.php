@@ -8,6 +8,8 @@ use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -16,12 +18,22 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    // public function index()
+    // {
+    //     $title = 'Báo mới';
+    //     $title_page = 'List Posts';
+
+    //     $posts = PostModel::withCount(['comment'])->orderBy('id', 'DESC')->with('user')->paginate(10);
+
+    //     return view('fontend/posts.index', ['title' => $title, 'title_page' => $title_page, 'posts' => $posts]);
+    // }
+
     public function index()
     {
         $title = 'Báo mới';
-        $title_page = 'List Post';
+        $title_page = 'List Posts';
 
-        $posts = PostModel::withCount(['comment'])->with('user')->paginate(10);
+        $posts = PostModel::withCount(['comment'])->orderBy('id', 'DESC')->with('user')->paginate(10);
 
         return view('fontend/posts.index', ['title' => $title, 'title_page' => $title_page, 'posts' => $posts]);
     }
@@ -33,6 +45,8 @@ class PostController extends Controller
         $comments = $post->comment()->get();
 
         return view('fontend/posts.postdetail', ['title' => $title, 'post' => $post, 'comments' => $comments]);
+
+
 
         // $post = PostModel::with(['comment' => function ($query) {
         //     $query->where('description');
@@ -48,7 +62,11 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        $users = User::all();
+        $posts = PostModel::all();
+
+        $title_page = "Create Post";
+        return view('fontend/posts.new', ['title_page' => $title_page, 'users' => $users]);
     }
 
     /**
@@ -59,7 +77,27 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'description' => 'required'
+        ], [
+            'title.required' => ' Không được để trống!',
+            'description.required' => ' Không được để trống!',
+        ]);
+
+        if ($validator->fails())
+            return redirect()->route('post.create')->withErrors($validator)->withInput();
+        else {
+            $post = new PostModel;
+
+            $post->user_id = $request->user_id;
+            $post->title = $request->title;
+            $post->description = $request->description;
+
+            $post->save();
+
+            return redirect()->route('post.index')->with('message', 'Thêm thành công!');
+        }
     }
 
     /**
@@ -104,6 +142,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = PostModel::findOrFail($id);
+        $post->delete();
+        return redirect()->route('post.index')->with('message', 'Xóa thành công!');;
     }
 }

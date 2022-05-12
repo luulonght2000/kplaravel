@@ -3,8 +3,14 @@
 @section('master_content')
 
 <div class="container">
-    <h1>Comment</h1>
-    <p>{{$slug}}</p>
+    <x-modal>
+        <x-slot name="title">
+            Custom Title
+        </x-slot>
+        @foreach ($tasks as $task)
+        <h3>{{ $task['name'] }}</h3>
+        @endforeach
+    </x-modal>
 </div>
 
 @endsection

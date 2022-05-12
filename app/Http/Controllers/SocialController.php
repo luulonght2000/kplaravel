@@ -3,58 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Validator, Redirect, Response, File;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
+use Exception;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 
-class LoginController extends Controller
+class SocialController extends Controller
 {
-    public function login()
+    public function redirect()
     {
-        return view('auth.login');
+        return Socialite::driver('google')->redirect();
     }
 
-    public function checkLogin(Request $request)
+    public function callback()
     {
-        // Kiểm tra dữ liệu nhập vào
-        $rules = [
-            'email' => 'required|email',
-            'password' => 'required|min:8'
-        ];
-        $messages = [
-            'email.required' => 'Email là trường bắt buộc',
-            'email.email' => 'Email không đúng định dạng',
-            'password.required' => 'Mật khẩu là trường bắt buộc',
-            'password.min' => 'Mật khẩu phải chứa ít nhất 8 ký tự',
-        ];
-        $validator = Validator::make($request->all(), $rules, $messages);
+        try {
+            $user = Socialite::driver('google')->user();
+            $user = User::where('google_id', $user->id)->first();
 
-
-        if ($validator->fails()) {
-            return redirect()->route('auth.login')->withErrors($validator)->withInput();
-        } else {
-            $email = $request->input('email');
-            $password = $request->input('password');
-
-            if (Auth::attempt(['email' => $email, 'password' => $password])) {
-                return redirect()->route('post.index');
+            if ($user) {
+                Auth::login($user);
+                return redirect('/home');
             } else {
-                Session::flash('error', 'Email hoặc mật khẩu không đúng!');
-                return redirect('login');
+                $newUser = User::create([
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'google_id' => $user->id,
+                    'password' => encrypt('123456dummy')
+                ]);
+                Auth::login($newUser);
+                return redirect('/post');
             }
+        } catch (Exception $e) {
+            dd($e->getMessage());
         }
     }
-
-    public function logout(Request $request)
-    {
-        Session::flush();
-        Auth::logout();
-        return redirect()->route('auth.login');
-    }
-
-
-
     /**
      * Display a listing of the resource.
      *
