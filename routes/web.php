@@ -50,7 +50,15 @@ Route::prefix('/')->group(function () {
 });
 
 //---------------------------Login google-----------------------------
-// Route::get('auth/redirect', 'App\Http\Controllers\SocialController@redirect');
-// Route::get('callback/google', 'App\Http\Controllers\SocialController@callback');
-Route::get('auth/redirect', 'App\Http\Controllers\Auth\LoginController@redirectToGoogle');
-Route::get('auth/google/callback', 'App\Http\Controllers\Auth\LoginController@handleGoogleCallback');
+Route::controller(App\Http\Controllers\SocialController::class)->group(function () {
+    Route::get('google', 'redirectToGoogle')->name('auth.google');
+    Route::get('google/callback', 'handleGoogleCallback');
+    Route::get('google/logout', 'logout');
+});
+
+
+//--------------------------Login Facebook--------------------------------
+Route::controller(App\Http\Controllers\SocialController::class)->group(function () {
+    Route::get('facebook', 'redirectToFacebook')->name('auth.facebook');
+    Route::get('facebook/callback', 'handleFacebookCallback');
+});

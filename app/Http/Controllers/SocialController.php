@@ -9,37 +9,94 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class SocialController extends Controller
 {
-    public function redirect()
+    public function __construct()
+    {
+        $this->middleware('guest')->except('logout', 'getLogout');
+    }
+
+    public function redirectToGoogle()
     {
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback()
+
+    public function handleGoogleCallback()
     {
         try {
-            $user = Socialite::driver('google')->user();
-            $user = User::where('google_id', $user->id)->first();
 
-            if ($user) {
-                Auth::login($user);
-                return redirect('/home');
+            $user = Socialite::driver('google')->user();
+
+            $finduser = User::where('google_id', $user->id)->first();
+
+            if ($finduser) {
+
+                Auth::login($finduser);
+
+                return redirect()->route('home');
             } else {
-                $newUser = User::create([
+                $newUser = User::updateOrCreate(['email' => $user->email], [
                     'name' => $user->name,
-                    'email' => $user->email,
                     'google_id' => $user->id,
                     'password' => encrypt('123456dummy')
                 ]);
+
                 Auth::login($newUser);
-                return redirect('/post');
+
+                return redirect()->route('home');
             }
         } catch (Exception $e) {
             dd($e->getMessage());
         }
     }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->flush();
+        $request->session()->regenerate();
+        return redirect()->route('home');
+    }
+
+    //-------------------FaceBook---------------------------
+
+    public function redirectToFacebook()
+    {
+        return Socialite::driver('facebook')->redirect();
+    }
+
+    public function handleFacebookCallback()
+    {
+        try {
+
+            $user = Socialite::driver('facebook')->user();
+
+            $finduser = User::where('facebook_id', $user->id)->first();
+
+            if ($finduser) {
+
+                Auth::login($finduser);
+
+                return redirect()->route('home');
+            } else {
+                $newUser = User::updateOrCreate(['email' => $user->email], [
+                    'name' => $user->name,
+                    'facebook_id' => $user->id,
+                    'password' => encrypt('123456dummy')
+                ]);
+
+                Auth::login($newUser);
+
+                return redirect()->route('home');
+            }
+        } catch (Exception $e) {
+            dd($e->getMessage());
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *

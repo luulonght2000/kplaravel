@@ -29,8 +29,9 @@
                 </div><br>
 
                 <input type="submit" value="SIGNUP">
+                <p>Don't have an Account? <a href="{{route('auth.google')}}"> Login Now!</a></p>
             </form>
-            <p>Don't have an Account? <a href="{{route('auth.login')}}"> Login Now!</a></p>
+
         </div>
     </div>
 </div>

@@ -61,8 +61,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{route('post.index')}}">Admin</a>
                     </li>
-                    @elseif( Auth::user()->is_admin == 0)
-
                     @endif
                 </div>
                 @endif
