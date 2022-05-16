@@ -21,6 +21,12 @@ Auth::routes();
 //Trang chủ mặc định 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::get('/404', function () {
+    abort(404);
+});
+
+Route::get('/readData', [App\Http\Controllers\UserController::class, 'readData']);
+
 
 //Đăng ký thành viên 
 Route::get('register', [\App\Http\Controllers\RegisterController::class, 'getRegister'])->name('register');

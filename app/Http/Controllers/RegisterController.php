@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\Console\Input\Input;
+use App\Mail\VerifyEmail;
 
 class RegisterController extends Controller
 {
@@ -50,6 +53,14 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function send($email)
+    {
+        $data = new \stdClass();
+        $data->var_one = 'Demo One Value';
+        $data->var_two = 'Demo Two Value';
+        Mail::to($email)->send(new VerifyEmail($data));
+    }
+
 
     public function postRegister(Request $request)
     {
@@ -61,6 +72,12 @@ class RegisterController extends Controller
         } else {
             if ($this->create($allRequest)) {
                 Session::flash('success', 'Đăng ký thành viên thành công!');
+                $email = $request->email;
+                $this->send($email);
+                // Mail::send('mails.verify', array('name' => $request->name), function ($message) use ($email) {
+                //     $message->from('hello22@example.com', 'Laravel');
+                //     $message->to($email)->subject('Your Reminder!');
+                // });
                 return redirect('register');
             } else {
                 Session::flash('error', 'Đăng ký thành viên thất bại!');
