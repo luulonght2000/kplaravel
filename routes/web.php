@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\LoginController;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,27 +16,35 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('fontend/home');
+Auth::routes();
+
+//Trang chủ mặc định 
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/404', function () {
+    abort(404);
 });
 
-Route::get('user/{id}/name/{name?}', function ($id, $name = "null") {
-    return "User: $id, Tên: $name";
-});
-// ->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
+Route::get('/readData', [App\Http\Controllers\UserController::class, 'readData']);
 
 
-Route::get('/responses', function ($minutes = 4) {
-    return response('Hello World')->cookie('name', 'value', $minutes);
-});
+//Đăng ký thành viên 
+Route::get('register', [\App\Http\Controllers\RegisterController::class, 'getRegister'])->name('register');
+Route::post('register', [\App\Http\Controllers\RegisterController::class, 'postRegister']);
 
-Route::prefix('/')->group(function () {
-    Route::resource('home', \App\Http\Controllers\HomeController::class);
-});
+//Đăng nhập và xử lý đăng nhập
+Route::get('login', [\App\Http\Controllers\LoginController::class, 'login'])->name('auth.login');
+Route::post('login', [\App\Http\Controllers\LoginController::class, 'checkLogin'])->name('checkLogin');
 
-Route::prefix('/post')->group(function () {
-    Route::resource('/', \App\Http\Controllers\PostController::class);
-    Route::get('/postDetail/{id}', '\App\Http\Controllers\PostController@postDetail');
+//Logout
+Route::get('logout', [App\Http\Controllers\LoginController::class, 'logout']);
+
+
+//Trang admin
+Route::prefix('/')->middleware('admin.login')->group(function () {
+    Route::resource('/post', \App\Http\Controllers\PostController::class);
+    Route::get('/post', [\App\Http\Controllers\PostController::class, 'index'])->name('post.index');
+    Route::get('/post/postDetail/{id}', '\App\Http\Controllers\PostController@postDetail');
 });
 
 Route::prefix('/')->group(function () {
@@ -43,4 +53,18 @@ Route::prefix('/')->group(function () {
 
 Route::prefix('/')->group(function () {
     Route::resource('user', \App\Http\Controllers\UserController::class);
+});
+
+//---------------------------Login google-----------------------------
+Route::controller(App\Http\Controllers\SocialController::class)->group(function () {
+    Route::get('google', 'redirectToGoogle')->name('auth.google');
+    Route::get('google/callback', 'handleGoogleCallback');
+    Route::get('google/logout', 'logout');
+});
+
+
+//--------------------------Login Facebook--------------------------------
+Route::controller(App\Http\Controllers\SocialController::class)->group(function () {
+    Route::get('facebook', 'redirectToFacebook')->name('auth.facebook');
+    Route::get('facebook/callback', 'handleFacebookCallback');
 });
