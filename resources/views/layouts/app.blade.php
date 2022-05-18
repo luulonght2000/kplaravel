@@ -64,6 +64,22 @@
                     @endif
                 </div>
                 @endif
+
+                @if (Auth::check())
+                <div>
+                    @if( Auth::user()->is_admin == 1)
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Dashboard
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="{{url('user')}}">User</a></li>
+                            <li><a class="dropdown-item" href="{{url('post')}}">Post</a></li>
+                        </ul>
+                    </li>
+                    @endif
+                </div>
+                @endif
             </ul>
 
             <form class="d-flex">
