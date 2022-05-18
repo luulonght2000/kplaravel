@@ -15,7 +15,7 @@
           </div>
           <br>
           @endif
-          <form action="{{url("user/import")}}" method="post" enctype="multipart/form-data">
+          <form action="{{url("admin/user/import")}}" method="post" enctype="multipart/form-data">
             @csrf
             <fieldset>
               <label>Select File to Upload <small class="warning text-muted">{{__('Please upload only Excel (.xlsx or .xls) files')}}</small></label>
@@ -45,7 +45,7 @@
             <h4 class="card-title">User Data Table</h4>
           </div>
           <div class="pull-right">
-            <a href="{{url("user/export")}}" class="btn btn-primary" style="margin-left:85%">Export Excel Data</a>
+            <a href="{{url("admin/user/export")}}" class="btn btn-primary" style="margin-left:85%">Export Excel Data</a>
           </div>
         </div>
         <div class="card-body">
@@ -54,7 +54,6 @@
               <thead>
                 <th>Name</th>
                 <th>Email</th>
-                <th>password</th>
                 <th>Action</th>
               </thead>
               <tbody>
@@ -63,9 +62,8 @@
                 <tr>
                   <td>{{ $row->name }}</td>
                   <td>{{ $row->email }}</td>
-                  <td>{{ $row->password }}</td>
                   <td>
-                    <form action="{{url('user/destroy', ['row'=>$row->id])}}" method="POST" onsubmit="return(confirm('Bạn có thực sự muốn xóa?'))">
+                    <form action="{{url('admin/user/destroy', ['row'=>$row->id])}}" method="POST" onsubmit="return(confirm('Bạn có thực sự muốn xóa?'))">
                       @method('DELETE')
                       @csrf
                       <input type="submit" value="Xóa">

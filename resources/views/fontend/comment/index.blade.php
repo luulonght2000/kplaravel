@@ -7,9 +7,8 @@
     <thead>
       <tr>
         <th scope="col">STT</th>
-        <th scope="col">Title</th>
-        <th scope="col">User</th>
-        <th scope="col">Comment</th>
+        <th scope="col">user</th>
+        <th scope="col">Title Post</th>
       </tr>
     </thead>
     <tbody>
@@ -17,7 +16,7 @@
       @foreach($comments as $comment)
       <tr>
         <th scope="row">{{$i}}</th>
-        <td>{{$comment->id}}</td>
+        <td>{{$comment->user->name ?? 'none'}}</td>
         <td>{{$comment->post->title ?? 'None'}}</td>
       </tr>
       <?php $i++ ?>

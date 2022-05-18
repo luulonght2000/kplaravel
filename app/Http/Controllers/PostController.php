@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\StorePostRequest;
 
 class PostController extends Controller
 {
@@ -79,29 +80,18 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'description' => 'required'
-        ], [
-            'title.required' => ' Không được để trống!',
-            'description.required' => ' Không được để trống!',
-        ]);
+        $validator = $request->validated();
+        $post = new PostModel;
 
-        if ($validator->fails())
-            return redirect()->route('post.create')->withErrors($validator)->withInput();
-        else {
-            $post = new PostModel;
+        $post->user_id = $request->user_id;
+        $post->title = $request->title;
+        $post->description = $request->description;
 
-            $post->user_id = $request->user_id;
-            $post->title = $request->title;
-            $post->description = $request->description;
+        $post->save();
 
-            $post->save();
-
-            return redirect()->route('post.index')->with('message', 'Thêm thành công!');
-        }
+        return redirect()->route('post.index')->with('message', 'Thêm thành công!');
     }
 
     /**

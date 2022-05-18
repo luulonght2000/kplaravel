@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ImportExcelRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,14 +22,10 @@ class ImportExcelController extends Controller
         return view('fontend.user.import_excel', ['data' => $user]);
     }
 
-    function importData(Request $request)
+    function importData(ImportExcelRequest $request)
     {
-        $this->validate($request, [
-            'uploaded_file' => 'required|file|mimes:xls,xlsx'
-        ], [
-            'uploaded_file.required' => 'Không được để trống!',
-            'uploaded_file.mimes' => 'Vui lòng chọn file .xls hoặc .xlsx!',
-        ]);
+        $validated = $request->validated();
+
         $the_file = $request->file('uploaded_file');
         try {
             $spreadsheet = IOFactory::load($the_file->getRealPath());

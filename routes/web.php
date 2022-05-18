@@ -45,12 +45,14 @@ Route::get('logout', [App\Http\Controllers\LoginController::class, 'logout']);
 
 
 //Trang admin
-Route::prefix('/')->middleware('admin.login')->group(function () {
+Route::prefix('/admin')->middleware('admin.login')->group(function () {
+
+    //==========================Post=================================================
     Route::resource('/post', \App\Http\Controllers\PostController::class);
     Route::get('/post', [\App\Http\Controllers\PostController::class, 'index'])->name('post.index');
     Route::get('/post/postDetail/{id}', '\App\Http\Controllers\PostController@postDetail');
 
-    //==========================Excel===========================================
+    //==========================Users Excel===========================================
     Route::get('/user', [App\Http\Controllers\ImportExcelController::class, 'index'])->name('user.index');
     Route::post('user/import', [App\Http\Controllers\ImportExcelController::class, 'importData']);
     Route::get('user/export', [App\Http\Controllers\ImportExcelController::class, 'exportData']);

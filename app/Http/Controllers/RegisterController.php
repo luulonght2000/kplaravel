@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RsgisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -18,29 +19,6 @@ class RegisterController extends Controller
     public function getRegister()
     {
         return view('auth.register');
-    }
-
-    protected function validator(array $data)
-    {
-        return Validator::make(
-            $data,
-            [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:6|confirmed',
-            ],
-            [
-                'name.required' => 'Họ và tên không được để trống!',
-                'name.max' => 'Họ và tên không quá 255 ký tự!',
-                'email.required' => 'Email không được để trống!',
-                'email.email' => 'Email không đúng định dạng!',
-                'email.max' => 'Email không quá 255 ký tự!',
-                'email.unique' => 'Email đã tồn tại!',
-                'password.required' => 'Mật khẩu là trường bắt buộc!',
-                'password.min' => 'Mật khẩu phải chứa ít nhất 8 ký tự!',
-                'password.confirmed' => 'Xác nhận mật khẩu không đúng!',
-            ]
-        );
     }
 
     protected function create(array $data)
@@ -62,27 +40,19 @@ class RegisterController extends Controller
     }
 
 
-    public function postRegister(Request $request)
+    public function postRegister(RsgisterRequest $request)
     {
-        $allRequest  = $request->all();
-        $validator = $this->validator($allRequest);
 
-        if ($validator->fails()) {
-            return redirect('register')->withErrors($validator)->withInput();
+        $allRequest = $request->all();
+
+        if ($this->create($allRequest)) {
+            Session::flash('success', 'Đăng ký thành viên thành công!');
+            $email = $request->email;
+            $this->send($email);
+            return redirect('register');
         } else {
-            if ($this->create($allRequest)) {
-                Session::flash('success', 'Đăng ký thành viên thành công!');
-                $email = $request->email;
-                $this->send($email);
-                // Mail::send('mails.verify', array('name' => $request->name), function ($message) use ($email) {
-                //     $message->from('hello22@example.com', 'Laravel');
-                //     $message->to($email)->subject('Your Reminder!');
-                // });
-                return redirect('register');
-            } else {
-                Session::flash('error', 'Đăng ký thành viên thất bại!');
-                return redirect('register');
-            }
+            Session::flash('error', 'Đăng ký thành viên thất bại!');
+            return redirect('register');
         }
     }
     /**
