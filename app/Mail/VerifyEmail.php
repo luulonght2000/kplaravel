@@ -33,6 +33,5 @@ class VerifyEmail extends Mailable
         return $this->from('hello@example.com')
             ->view('mails.verify')
             ->with(['more_variable' => 1]);
-        // ->attach('/path/to/file');
     }
 }

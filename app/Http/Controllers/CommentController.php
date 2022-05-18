@@ -18,14 +18,13 @@ class CommentController extends Controller
     {
         $title = 'Báo mới';
 
-        
+
 
         $posts = PostModel::orderBy('id', 'DESC')->paginate(10);
-        $users = User::orderBy('id', 'DESC')->get();
-        $comments = CommentModel::orderBy('id', 'DESC')->get();
+        $comments = CommentModel::orderBy('id', 'DESC') ->get();
 
 
-        return view('fontend/comment.index', ['title' => $title, 'posts' => $posts, 'users' => $users, 'comments' => $comments]);
+        return view('fontend/comment.index', ['title' => $title, 'posts' => $posts, 'comments' => $comments]);
     }
 
     /**

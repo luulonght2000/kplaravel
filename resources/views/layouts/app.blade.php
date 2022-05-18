@@ -73,8 +73,8 @@
                             Dashboard
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="{{url('user')}}">User</a></li>
-                            <li><a class="dropdown-item" href="{{url('post')}}">Post</a></li>
+                            <li><a class="dropdown-item" href="{{url('/admin/user')}}">User</a></li>
+                            <li><a class="dropdown-item" href="{{url('/admin/post')}}">Post</a></li>
                         </ul>
                     </li>
                     @endif

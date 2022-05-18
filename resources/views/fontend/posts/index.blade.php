@@ -71,7 +71,7 @@
             @foreach($posts as $post)
             <tr>
                 <td>{{$i}}</td>
-                <td><a href="/post/postDetail/{{$post->id}}">{{$post->title ?? 'None'}}</a></td>
+                <td><a href="post/postDetail/{{$post->id}}">{{$post->title ?? 'None'}}</a></td>
                 <td>{{$post->user->name ?? 'None'}}</td>
                 <td>{{$post->comment_count}}</td>
                 <td>
