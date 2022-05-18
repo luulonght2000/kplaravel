@@ -35,6 +35,10 @@ class PostController extends Controller
 
         $posts = PostModel::withCount(['comment'])->orderBy('id', 'DESC')->with('user')->paginate(10);
 
+        if ($key = request()->key) {
+            $posts = PostModel::withCount(['comment'])->orderBy('id', 'DESC')->with('user')->where('title', 'like', '%' . $key . '%')->paginate(10);
+        }
+
         return view('fontend/posts.index', ['title' => $title, 'title_page' => $title_page, 'posts' => $posts]);
     }
 

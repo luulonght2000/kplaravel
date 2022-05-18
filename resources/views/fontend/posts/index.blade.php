@@ -45,6 +45,14 @@
 @endif
 <div class="container" style="margin-top: 2em">
     <h1 class="title_page" style="color: red;">{{$title_page}}</h1>
+
+    <form action="" class="form-inline">
+        <div class="input-group">
+            <input type="search" class="form-control rounded" name="key" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+            <button type="submit" class="btn btn-outline-primary">search</button>
+        </div>
+    </form>
+
     <button class="button_add"><a href="{{route('post.create')}}">
             Add Post
         </a></button>

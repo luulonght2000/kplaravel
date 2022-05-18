@@ -5,6 +5,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -45,14 +49,16 @@ Route::prefix('/')->middleware('admin.login')->group(function () {
     Route::resource('/post', \App\Http\Controllers\PostController::class);
     Route::get('/post', [\App\Http\Controllers\PostController::class, 'index'])->name('post.index');
     Route::get('/post/postDetail/{id}', '\App\Http\Controllers\PostController@postDetail');
+
+    //==========================Excel===========================================
+    Route::get('/user', [App\Http\Controllers\ImportExcelController::class, 'index'])->name('user.index');
+    Route::post('user/import', [App\Http\Controllers\ImportExcelController::class, 'importData']);
+    Route::get('user/export', [App\Http\Controllers\ImportExcelController::class, 'exportData']);
+    Route::delete('/user/destroy/{id}', [App\Http\Controllers\ImportExcelController::class, 'destroy']);
 });
 
 Route::prefix('/')->group(function () {
     Route::resource('comment', \App\Http\Controllers\CommentController::class);
-});
-
-Route::prefix('/')->group(function () {
-    Route::resource('user', \App\Http\Controllers\UserController::class);
 });
 
 //---------------------------Login google-----------------------------
