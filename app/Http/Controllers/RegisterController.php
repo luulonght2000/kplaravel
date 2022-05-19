@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\RsgisterRequest;
+use App\Jobs\SendEmailJob;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -12,6 +13,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Console\Input\Input;
 use App\Mail\VerifyEmail;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\DB;
 
 class RegisterController extends Controller
 {
@@ -39,6 +44,13 @@ class RegisterController extends Controller
         Mail::to($email)->send(new VerifyEmail($data));
     }
 
+    public function enqueue($email)
+    {
+        $details = $email;
+        $emailJob = (new SendEmailJob($details));
+        dispatch($emailJob)->release(20);
+    }
+
 
     public function postRegister(RsgisterRequest $request)
     {
@@ -48,7 +60,7 @@ class RegisterController extends Controller
         if ($this->create($allRequest)) {
             Session::flash('success', 'Đăng ký thành viên thành công!');
             $email = $request->email;
-            $this->send($email);
+            $this->enqueue($email);
             return redirect('register');
         } else {
             Session::flash('error', 'Đăng ký thành viên thất bại!');
