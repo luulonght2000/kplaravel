@@ -11,16 +11,13 @@ use Illuminate\Support\Facades\Mail;
 class VerifyEmail extends Mailable
 {
     use Queueable, SerializesModels;
-    public $data;
-
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct()
     {
-        $this->data = $data;
     }
 
     /**
@@ -31,7 +28,7 @@ class VerifyEmail extends Mailable
     public function build()
     {
         return $this->from('hello@example.com')
-            ->view('mails.verify')
-            ->with(['more_variable' => 1]);
+            ->subject('Register successfully')
+            ->view('mails.verify');
     }
 }

@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Jobs\SendEmailJob;
+use App\Mail\VerifyEmail;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-
-
+use Illuminate\Support\Facades\Mail;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -76,3 +77,10 @@ Route::controller(App\Http\Controllers\SocialController::class)->group(function 
     Route::get('facebook', 'redirectToFacebook')->name('auth.facebook');
     Route::get('facebook/callback', 'handleFacebookCallback');
 });
+
+// Route::get('send-email', function () {
+//     $delay = now()->addMinute(1);
+//     Mail::to('long@gmail.com')->later($delay, new VerifyEmail());
+// });
+
+Route::get('test-email', [\App\Http\Controllers\RegisterController::class, 'enqueue']);
